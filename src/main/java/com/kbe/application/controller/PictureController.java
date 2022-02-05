@@ -1,56 +1,65 @@
 package com.kbe.application.controller;
 
-import com.kbe.application.entity.Picture;
-import com.kbe.application.repository.PictureRepository;
+import com.kbe.application.api.MetaDataExtractorApi;
+import com.kbe.application.model.Gif;
+import com.kbe.application.repository.GifRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/picture")
+@RequestMapping("/gif")
 public class PictureController {
 
-    private PictureRepository pictureRepository;
+    private GifRepository gifRepository;
 
-    public PictureController(PictureRepository pictureRepository) {
-        this.pictureRepository = pictureRepository;
+    public PictureController(GifRepository gifRepository) {
+        this.gifRepository = gifRepository;
     }
 
     @GetMapping("/all")
-    public List<Picture> temp() {
-        return pictureRepository.findAll();
+    public List<Gif> temp() {
+        try {
+            MetaDataExtractorApi metaDataExtractorApi = new MetaDataExtractorApi();
+            metaDataExtractorApi.getMetaDataByUrl("https://media.giphy.com/media/4N5vB4aErlVtVsywBw/giphy.gif");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return gifRepository.findAll();
     }
 
     @PutMapping("/{url}")
-    public @ResponseBody
-    ResponseEntity<Picture> postNewPicture(@PathVariable(value = "url") String url) {
-        Picture picture = new Picture(url);
-        picture = pictureRepository.save(picture);
+    @ResponseBody
+    public ResponseEntity<Gif> postNewPicture(@PathVariable(value = "url") String url) {
+        Gif gif = new Gif(url);
+        gif = gifRepository.save(gif);
 
-        return ResponseEntity.ok(picture);
+        return ResponseEntity.ok(gif);
     }
 
     @PostMapping("/{id}/upvote")
-    public @ResponseBody
-    ResponseEntity<Picture> upvotePicture(@PathVariable(value = "id") UUID id) {
-        Picture picture = pictureRepository.getById(id);
-        picture.setUpvotes(picture.getUpvotes() + 1);
+    @ResponseBody
+    public ResponseEntity<Gif> upvotePicture(@PathVariable(value = "id") UUID id) {
+        Gif gif = gifRepository.getById(id);
+        gif.setUpvotes(gif.getUpvotes() + 1);
 
-        picture = pictureRepository.save(picture);
+        gif = gifRepository.save(gif);
 
-        return ResponseEntity.ok(picture);
+        return ResponseEntity.ok(gif);
     }
 
     @PostMapping("/{id}/downvote")
-    public @ResponseBody
-    ResponseEntity<Picture> downvotePicture(@PathVariable(value = "id") UUID id) {
-        Picture picture = pictureRepository.getById(id);
-        picture.setUpvotes(picture.getUpvotes() - 1);
+    @ResponseBody
+    public ResponseEntity<Gif> downvotePicture(@PathVariable(value = "id") UUID id) {
+        Gif gif = gifRepository.getById(id);
+        gif.setUpvotes(gif.getUpvotes() - 1);
 
-        picture = pictureRepository.save(picture);
+        gif = gifRepository.save(gif);
 
-        return ResponseEntity.ok(picture);
+        return ResponseEntity.ok(gif);
     }
 }

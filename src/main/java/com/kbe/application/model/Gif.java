@@ -1,4 +1,4 @@
-package com.kbe.application.entity;
+package com.kbe.application.model;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -8,9 +8,9 @@ import javax.persistence.Id;
 import java.util.UUID;
 
 @Entity
-public class Picture {
+public class Gif {
 
-    public Picture() {
+    public Gif() {
     }
 
     @Id
@@ -46,7 +46,7 @@ public class Picture {
         this.downvotes = downvotes;
     }
 
-    public Picture(String pictureUrl) {
+    public Gif(String pictureUrl) {
         this.pictureUrl = pictureUrl;
     }
 }

@@ -1,12 +1,12 @@
 package com.kbe.application.repository;
 
-import com.kbe.application.entity.Picture;
+import com.kbe.application.model.Gif;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
 @RestController
-public interface PictureRepository extends JpaRepository<Picture, UUID> {
+public interface GifRepository extends JpaRepository<Gif, UUID> {
 
 }
