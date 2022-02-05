@@ -62,6 +62,4 @@ public class GifController {
 
         return ResponseEntity.ok(gif);
     }
-
-
 }
