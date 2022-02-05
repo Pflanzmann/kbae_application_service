@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/gif")
+@CrossOrigin
+@RequestMapping("/gifs")
 public class GifController {
 
     private GifRepository gifRepository;
@@ -20,15 +21,8 @@ public class GifController {
         this.gifRepository = gifRepository;
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public List<Gif> temp() {
-        try {
-            MetaDataExtractorApi metaDataExtractorApi = new MetaDataExtractorApi();
-            metaDataExtractorApi.getMetaDataByUrl("https://media.giphy.com/media/4N5vB4aErlVtVsywBw/giphy.gif");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         return gifRepository.findAll();
     }
 
