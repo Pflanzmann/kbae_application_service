@@ -1,4 +1,4 @@
-package com.kbe.application.model;
+package com.kbe.application.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

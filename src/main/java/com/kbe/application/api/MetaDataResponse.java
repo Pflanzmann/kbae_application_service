@@ -1,7 +1,9 @@
-package com.kbe.application.model;
+package com.kbe.application.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.kbe.application.api.FileMetaData;
+import com.kbe.application.api.GifMetaData;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MetaDataResponse {

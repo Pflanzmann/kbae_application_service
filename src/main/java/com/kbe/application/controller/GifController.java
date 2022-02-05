@@ -12,11 +12,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/gif")
-public class PictureController {
+public class GifController {
 
     private GifRepository gifRepository;
 
-    public PictureController(GifRepository gifRepository) {
+    public GifController(GifRepository gifRepository) {
         this.gifRepository = gifRepository;
     }
 
@@ -62,4 +62,6 @@ public class PictureController {
 
         return ResponseEntity.ok(gif);
     }
+
+
 }
