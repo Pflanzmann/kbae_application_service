@@ -1,11 +1,28 @@
 package com.kbe.application.model;
 
-public class GifDetailed extends Gif {
+import java.util.UUID;
+
+public class GifDetails {
+
+    public GifDetails(UUID id, int fileSize, int imageWidth, int imageHeight, int frameCount, String duration) {
+        this.id = id;
+        this.fileSize = fileSize;
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
+        this.frameCount = frameCount;
+        this.duration = duration;
+    }
+
+    private UUID id;
     private int fileSize;
     private int imageWidth;
     private int imageHeight;
     private int frameCount;
     private String duration;
+
+    public UUID getId() {
+        return id;
+    }
 
     public int getFileSize() {
         return fileSize;
