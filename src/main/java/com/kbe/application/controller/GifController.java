@@ -2,7 +2,7 @@ package com.kbe.application.controller;
 
 import com.kbe.application.api.MetaDataExtractorApi;
 import com.kbe.application.model.Gif;
-import com.kbe.application.model.NewGifUrl;
+import com.kbe.application.model.NewGifRequest;
 import com.kbe.application.repository.GifRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,15 +30,15 @@ public class GifController {
         return gifRepository.findAll();
     }
 
-    @PutMapping("")
+    @PostMapping("")
     @ResponseBody
-    public ResponseEntity<Gif> postNewPicture(@RequestBody NewGifUrl newGifUrl) {
+    public ResponseEntity<Gif> postNewPicture(@RequestBody NewGifRequest newGifRequest) {
         List<Gif> gifs = gifRepository.findAll();
-        if (gifs.stream().anyMatch(gif -> gif.getUrl().equals(newGifUrl.getUrl()))) {
+        if (gifs.stream().anyMatch(gif -> gif.getUrl().equals(newGifRequest.getUrl()))) {
             return ResponseEntity.badRequest().build();
         }
 
-        Gif gif = new Gif(newGifUrl.getUrl());
+        Gif gif = new Gif(newGifRequest.getUrl());
         gif = gifRepository.save(gif);
 
         return ResponseEntity.ok(gif);

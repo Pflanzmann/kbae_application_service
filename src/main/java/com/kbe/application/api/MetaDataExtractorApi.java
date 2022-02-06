@@ -3,6 +3,7 @@ package com.kbe.application.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kbe.application.model.Gif;
 import com.kbe.application.model.GifDetails;
+import com.kbe.application.model.external.MetaDataResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
