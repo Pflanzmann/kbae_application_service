@@ -10,20 +10,20 @@ import java.util.UUID;
 @Entity
 public class Gif {
 
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID id;
+    private String url;
+    private int upvotes;
+    private int downvotes;
+
     public Gif() {
     }
 
     public Gif(String url) {
         this.url = url;
     }
-
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    public UUID id;
-    private String url;
-    private int upvotes;
-    private int downvotes;
 
     public UUID getId() {
         return id;

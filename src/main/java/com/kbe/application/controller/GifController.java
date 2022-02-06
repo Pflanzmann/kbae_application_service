@@ -1,8 +1,10 @@
 package com.kbe.application.controller;
 
+import com.kbe.application.api.MetaDataExtractorApi;
 import com.kbe.application.model.Gif;
 import com.kbe.application.model.NewGifUrl;
 import com.kbe.application.repository.GifRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +17,15 @@ import java.util.UUID;
 public class GifController {
 
     private GifRepository gifRepository;
+    private MetaDataExtractorApi metaDataExtractorApi;
 
-    public GifController(GifRepository gifRepository) {
+    @Autowired
+    public GifController(GifRepository gifRepository, MetaDataExtractorApi metaDataExtractorApi) {
         this.gifRepository = gifRepository;
+        this.metaDataExtractorApi = metaDataExtractorApi;
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public List<Gif> temp() {
         return gifRepository.findAll();
     }
@@ -58,7 +63,6 @@ public class GifController {
 
         gif = gifRepository.save(gif);
 
-        System.out.println("down");
         return ResponseEntity.ok(gif);
     }
 }
