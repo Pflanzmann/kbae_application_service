@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class GifInformationStorageApi {
@@ -50,5 +51,23 @@ public class GifInformationStorageApi {
         });
 
         return gifInformations;
+    }
+
+    public GifInformation getGifInformation(UUID id) throws IOException {
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("http://localhost:8083/information/" + id)
+                .get()
+                .build();
+
+        Response response = okHttpClient.newCall(request).execute();
+        ObjectMapper om = new ObjectMapper();
+
+        String jsonString = response.body().string();
+
+        GifInformation gifInformation = om.readValue(jsonString, GifInformation.class);
+
+        return gifInformation;
     }
 }

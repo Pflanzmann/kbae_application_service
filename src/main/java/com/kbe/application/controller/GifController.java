@@ -1,13 +1,17 @@
 package com.kbe.application.controller;
 
+import com.kbe.application.api.GifInformationStorageApi;
 import com.kbe.application.api.MetaDataExtractorApi;
 import com.kbe.application.model.Gif;
+import com.kbe.application.model.GifDetails;
+import com.kbe.application.model.GifInformation;
 import com.kbe.application.model.NewGifRequest;
 import com.kbe.application.repository.GifRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,11 +22,13 @@ public class GifController {
 
     private GifRepository gifRepository;
     private MetaDataExtractorApi metaDataExtractorApi;
+    private GifInformationStorageApi gifInformationStorageApi;
 
     @Autowired
-    public GifController(GifRepository gifRepository, MetaDataExtractorApi metaDataExtractorApi) {
+    public GifController(GifRepository gifRepository, MetaDataExtractorApi metaDataExtractorApi, GifInformationStorageApi gifInformationStorageApi) {
         this.gifRepository = gifRepository;
         this.metaDataExtractorApi = metaDataExtractorApi;
+        this.gifInformationStorageApi = gifInformationStorageApi;
     }
 
     @GetMapping("")
@@ -40,6 +46,22 @@ public class GifController {
 
         Gif gif = new Gif(newGifRequest.getUrl());
         gif = gifRepository.save(gif);
+
+        GifInformation gifInformation = new GifInformation(
+                gif.getId(),
+                newGifRequest.getTitle(),
+                newGifRequest.getAuthor(),
+                newGifRequest.getDescription(),
+                newGifRequest.getTopic()
+        );
+
+        try {
+            System.out.println(gifInformationStorageApi.postNewGifInformation(gifInformation));
+        } catch (IOException e) {
+            e.printStackTrace();
+            gifRepository.delete(gif);
+            return ResponseEntity.internalServerError().build();
+        }
 
         return ResponseEntity.ok(gif);
     }
@@ -64,5 +86,31 @@ public class GifController {
         gif = gifRepository.save(gif);
 
         return ResponseEntity.ok(gif);
+    }
+
+    @GetMapping("/{id}/information")
+    @ResponseBody
+    public ResponseEntity<GifInformation> getGifInformation(@PathVariable(value = "id") UUID id) {
+        try {
+            GifInformation gifInformation = gifInformationStorageApi.getGifInformation(id);
+
+            System.out.println(gifInformation);
+
+            return ResponseEntity.ok(gifInformation);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{id}/details")
+    @ResponseBody
+    public ResponseEntity<GifDetails> getGifDetails(@PathVariable(value = "id") UUID id) {
+        try {
+            Gif gif = gifRepository.getById(id);
+
+            return ResponseEntity.ok(metaDataExtractorApi.getMetaDataByUrl(gif));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
