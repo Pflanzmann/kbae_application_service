@@ -13,17 +13,33 @@ public class Gif {
     public Gif() {
     }
 
-    public Gif(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
+    public Gif(String url) {
+        this.url = url;
     }
 
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     public UUID id;
-    private String pictureUrl;
+    private String url;
     private int upvotes;
     private int downvotes;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String pictureUrl) {
+        this.url = pictureUrl;
+    }
 
     public int getUpvotes() {
         return upvotes;

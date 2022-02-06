@@ -1,12 +1,11 @@
 package com.kbe.application.controller;
 
-import com.kbe.application.api.MetaDataExtractorApi;
 import com.kbe.application.model.Gif;
+import com.kbe.application.model.NewGifUrl;
 import com.kbe.application.repository.GifRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,15 +20,20 @@ public class GifController {
         this.gifRepository = gifRepository;
     }
 
-    @GetMapping("")
+    @GetMapping("/all")
     public List<Gif> temp() {
         return gifRepository.findAll();
     }
 
-    @PutMapping("/{url}")
+    @PutMapping("")
     @ResponseBody
-    public ResponseEntity<Gif> postNewPicture(@PathVariable(value = "url") String url) {
-        Gif gif = new Gif(url);
+    public ResponseEntity<Gif> postNewPicture(@RequestBody NewGifUrl newGifUrl) {
+        List<Gif> gifs = gifRepository.findAll();
+        if (gifs.stream().anyMatch(gif -> gif.getUrl().equals(newGifUrl.getUrl()))) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Gif gif = new Gif(newGifUrl.getUrl());
         gif = gifRepository.save(gif);
 
         return ResponseEntity.ok(gif);
@@ -50,10 +54,11 @@ public class GifController {
     @ResponseBody
     public ResponseEntity<Gif> downvotePicture(@PathVariable(value = "id") UUID id) {
         Gif gif = gifRepository.getById(id);
-        gif.setUpvotes(gif.getUpvotes() - 1);
+        gif.setDownvotes(gif.getDownvotes() + 1);
 
         gif = gifRepository.save(gif);
 
+        System.out.println("down");
         return ResponseEntity.ok(gif);
     }
 }
