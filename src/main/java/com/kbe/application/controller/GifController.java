@@ -8,6 +8,7 @@ import com.kbe.application.model.GifInformation;
 import com.kbe.application.model.NewGifRequest;
 import com.kbe.application.repository.GifRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/gifs")
+@RequestMapping("/api/gifs")
 public class GifController {
 
     private GifRepository gifRepository;
@@ -32,17 +33,18 @@ public class GifController {
     }
 
     @GetMapping("")
-    public List<Gif> temp() {
+    public List<Gif> getAll() {
         return gifRepository.findAll();
     }
 
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<Gif> postNewPicture(@RequestBody NewGifRequest newGifRequest) {
+    public ResponseEntity<Gif> postNewGif(@RequestBody NewGifRequest newGifRequest) {
         List<Gif> gifs = gifRepository.findAll();
         if (gifs.stream().anyMatch(gif -> gif.getUrl().equals(newGifRequest.getUrl()))) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
+
 
         Gif gif = new Gif(newGifRequest.getUrl());
         gif = gifRepository.save(gif);
@@ -60,7 +62,7 @@ public class GifController {
         } catch (IOException e) {
             e.printStackTrace();
             gifRepository.delete(gif);
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
 
         return ResponseEntity.ok(gif);
@@ -68,7 +70,7 @@ public class GifController {
 
     @PostMapping("/{id}/upvote")
     @ResponseBody
-    public ResponseEntity<Gif> upvotePicture(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Gif> upvoteGif(@PathVariable(value = "id") UUID id) {
         Gif gif = gifRepository.getById(id);
         gif.setUpvotes(gif.getUpvotes() + 1);
 
@@ -79,7 +81,7 @@ public class GifController {
 
     @PostMapping("/{id}/downvote")
     @ResponseBody
-    public ResponseEntity<Gif> downvotePicture(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Gif> downvoteGif(@PathVariable(value = "id") UUID id) {
         Gif gif = gifRepository.getById(id);
         gif.setDownvotes(gif.getDownvotes() + 1);
 
@@ -94,11 +96,9 @@ public class GifController {
         try {
             GifInformation gifInformation = gifInformationStorageApi.getGifInformation(id);
 
-            System.out.println(gifInformation);
-
             return ResponseEntity.ok(gifInformation);
         } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -110,7 +110,7 @@ public class GifController {
 
             return ResponseEntity.ok(metaDataExtractorApi.getMetaDataByUrl(gif));
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

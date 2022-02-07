@@ -22,7 +22,7 @@ public class GifInformationStorageApi {
         RequestBody requestBody = RequestBody.create(bodyString, MediaType.get("application/json"));
 
         Request request = new Request.Builder()
-                .url("http://localhost:8083/information")
+                .url("http://localhost:8083/api/information")
                 .post(requestBody)
                 .build();
 
@@ -38,7 +38,7 @@ public class GifInformationStorageApi {
         OkHttpClient okHttpClient = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url("http://localhost:8083/information")
+                .url("http://localhost:8083/api/information")
                 .get()
                 .build();
 
@@ -57,7 +57,7 @@ public class GifInformationStorageApi {
         OkHttpClient okHttpClient = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url("http://localhost:8083/information/" + id)
+                .url("http://localhost:8083/api/information/" + id)
                 .get()
                 .build();
 
