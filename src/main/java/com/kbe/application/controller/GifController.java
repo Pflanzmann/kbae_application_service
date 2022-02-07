@@ -1,7 +1,9 @@
 package com.kbe.application.controller;
 
+import com.kbe.application.api.CalculatorApi;
 import com.kbe.application.api.GifInformationStorageApi;
 import com.kbe.application.api.MetaDataExtractorApi;
+import com.kbe.application.helper.CSVExporter;
 import com.kbe.application.model.Gif;
 import com.kbe.application.model.GifDetails;
 import com.kbe.application.model.GifInformation;
@@ -24,12 +26,22 @@ public class GifController {
     private GifRepository gifRepository;
     private MetaDataExtractorApi metaDataExtractorApi;
     private GifInformationStorageApi gifInformationStorageApi;
+    private CalculatorApi calculatorApi;
+    private CSVExporter csvExporter;
 
     @Autowired
-    public GifController(GifRepository gifRepository, MetaDataExtractorApi metaDataExtractorApi, GifInformationStorageApi gifInformationStorageApi) {
+    public GifController(CalculatorApi calculatorApi, GifRepository gifRepository, MetaDataExtractorApi metaDataExtractorApi, GifInformationStorageApi gifInformationStorageApi, CSVExporter csvExporter) {
+        this.csvExporter = csvExporter;
+        this.calculatorApi = calculatorApi;
         this.gifRepository = gifRepository;
         this.metaDataExtractorApi = metaDataExtractorApi;
         this.gifInformationStorageApi = gifInformationStorageApi;
+
+        try {
+            csvExporter.generateCSV();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @GetMapping("")
@@ -113,4 +125,6 @@ public class GifController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+
 }
