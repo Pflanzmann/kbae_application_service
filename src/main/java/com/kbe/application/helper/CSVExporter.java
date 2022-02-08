@@ -2,7 +2,7 @@ package com.kbe.application.helper;
 
 import com.kbe.application.api.CalculatorApi;
 import com.kbe.application.api.GifInformationStorageApi;
-import com.kbe.application.api.MetaDataExtractorApi;
+import com.kbe.application.api.MetaDataExtractorApiType;
 import com.kbe.application.model.Gif;
 import com.kbe.application.model.GifDetails;
 import com.kbe.application.model.GifInformation;
@@ -10,6 +10,8 @@ import com.kbe.application.model.GifVoteRatio;
 import com.kbe.application.repository.GifRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,16 +23,18 @@ import java.util.List;
 @Component
 public class CSVExporter {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final String CSV_FILE_NAME = "all_informations.csv";
     private final String[] CSV_HEADER = {"id", "url", "upvotes", "downvotes", "upvoteRate", "downvoteRate", "title", "author", "description", "topic", "fileSize", "imageWidth", "imageHeight", "frameCount", "duration"};
 
     private GifRepository gifRepository;
-    private MetaDataExtractorApi metaDataExtractorApi;
+    private MetaDataExtractorApiType metaDataExtractorApi;
     private GifInformationStorageApi gifInformationStorageApi;
     private CalculatorApi calculatorApi;
 
     @Autowired
-    public CSVExporter(GifRepository gifRepository, MetaDataExtractorApi metaDataExtractorApi, GifInformationStorageApi gifInformationStorageApi, CalculatorApi calculatorApi) {
+    public CSVExporter(GifRepository gifRepository, MetaDataExtractorApiType metaDataExtractorApi, GifInformationStorageApi gifInformationStorageApi, CalculatorApi calculatorApi) {
         this.gifRepository = gifRepository;
         this.metaDataExtractorApi = metaDataExtractorApi;
         this.gifInformationStorageApi = gifInformationStorageApi;
@@ -38,14 +42,15 @@ public class CSVExporter {
     }
 
     public void generateCSV() throws IOException {
+        logger.info("Generate csv file");
+
         List<Gif> allGifs = gifRepository.findAll();
         List<GifInformation> allGifInformations = gifInformationStorageApi.getAllGifInformations();
         List<GifDetails> allGifDetails = new ArrayList<>();
         List<GifVoteRatio> allGifVoteRatios = new ArrayList<>();
 
         for (Gif gif : allGifs) {
-            //  allGifDetails.add(metaDataExtractorApi.getMetaDataByUrl(gif));
-            allGifDetails.add(new GifDetails(null, 1, 2, 3, 4, "29"));
+            allGifDetails.add(metaDataExtractorApi.getMetaDataByUrl(gif));
             allGifVoteRatios.add(calculatorApi.getCalculation(gif));
         }
 
@@ -69,6 +74,7 @@ public class CSVExporter {
         }
         allGifInformations = orderedList;
 
+        logger.info("Start sftp connection");
         CSVFormat format = CSVFormat.Builder.create().setHeader(CSV_HEADER).build();
 
         FileWriter fileWriter = new FileWriter(CSV_FILE_NAME);
