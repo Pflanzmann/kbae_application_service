@@ -24,7 +24,7 @@ public class MetaDataExtractorApi implements MetaDataExtractorApiType {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public MetaDataExtractorApi() {
-        logger.info("Started DebugMataDataExtractorApi");
+        logger.info("Started MataDataExtractorApi");
     }
 
     @Override
