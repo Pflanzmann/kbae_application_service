@@ -18,6 +18,10 @@ public class GifInformation {
         this.topic = topic;
     }
 
+    public GifInformation(UUID id) {
+        this.id = id;
+    }
+
     public GifInformation() {
     }
 

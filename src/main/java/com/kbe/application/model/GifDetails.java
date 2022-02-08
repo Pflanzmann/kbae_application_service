@@ -4,6 +4,13 @@ import java.util.UUID;
 
 public class GifDetails {
 
+    private UUID id;
+    private int fileSize;
+    private int imageWidth;
+    private int imageHeight;
+    private int frameCount;
+    private String duration;
+
     public GifDetails(UUID id, int fileSize, int imageWidth, int imageHeight, int frameCount, String duration) {
         this.id = id;
         this.fileSize = fileSize;
@@ -13,12 +20,8 @@ public class GifDetails {
         this.duration = duration;
     }
 
-    private UUID id;
-    private int fileSize;
-    private int imageWidth;
-    private int imageHeight;
-    private int frameCount;
-    private String duration;
+    public GifDetails() {
+    }
 
     public UUID getId() {
         return id;

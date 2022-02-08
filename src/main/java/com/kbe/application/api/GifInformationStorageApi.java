@@ -70,4 +70,16 @@ public class GifInformationStorageApi {
 
         return gifInformation;
     }
+
+    public boolean getToStartExport() throws IOException {
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("http://localhost:8083/api/information/export")
+                .get()
+                .build();
+
+        Response response = okHttpClient.newCall(request).execute();
+        return response.isSuccessful();
+    }
 }

@@ -21,6 +21,9 @@ import java.util.List;
 @Component
 public class CSVExporter {
 
+    private final String CSV_FILE_NAME = "all_informations.csv";
+    private final String[] CSV_HEADER = {"id", "url", "upvotes", "downvotes", "upvoteRate", "downvoteRate", "title", "author", "description", "topic", "fileSize", "imageWidth", "imageHeight", "frameCount", "duration"};
+
     private GifRepository gifRepository;
     private MetaDataExtractorApi metaDataExtractorApi;
     private GifInformationStorageApi gifInformationStorageApi;
@@ -42,6 +45,7 @@ public class CSVExporter {
 
         for (Gif gif : allGifs) {
             //  allGifDetails.add(metaDataExtractorApi.getMetaDataByUrl(gif));
+            allGifDetails.add(new GifDetails(null, 1, 2, 3, 4, "29"));
             allGifVoteRatios.add(calculatorApi.getCalculation(gif));
         }
 
@@ -60,16 +64,17 @@ public class CSVExporter {
             }
 
             if (!found) {
-                orderedList.add(new GifInformation(gif.getId(), "", "", "", ""));
+                orderedList.add(new GifInformation(gif.getId()));
             }
         }
         allGifInformations = orderedList;
 
-        FileWriter fileWriter = new FileWriter("all_informations.csv");
-        CSVPrinter csvPrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT);
+        CSVFormat format = CSVFormat.Builder.create().setHeader(CSV_HEADER).build();
+
+        FileWriter fileWriter = new FileWriter(CSV_FILE_NAME);
+        CSVPrinter csvPrinter = new CSVPrinter(fileWriter, format);
         for (int index = 0; index < allGifs.size(); index++) {
             csvPrinter.printRecord(
-                    index,
                     allGifs.get(index).getId(),
                     allGifs.get(index).getUrl(),
                     allGifs.get(index).getUpvotes(),
@@ -79,11 +84,15 @@ public class CSVExporter {
                     allGifInformations.get(index).getTitle(),
                     allGifInformations.get(index).getAuthor(),
                     allGifInformations.get(index).getDescription(),
-                    allGifInformations.get(index).getTopic()
+                    allGifInformations.get(index).getTopic(),
+                    allGifDetails.get(index).getFileSize(),
+                    allGifDetails.get(index).getImageWidth(),
+                    allGifDetails.get(index).getImageHeight(),
+                    allGifDetails.get(index).getFrameCount(),
+                    allGifDetails.get(index).getDuration()
             );
         }
 
         csvPrinter.flush();
-
     }
 }

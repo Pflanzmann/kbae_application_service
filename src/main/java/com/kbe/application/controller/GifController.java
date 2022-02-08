@@ -9,6 +9,7 @@ import com.kbe.application.model.GifDetails;
 import com.kbe.application.model.GifInformation;
 import com.kbe.application.model.NewGifRequest;
 import com.kbe.application.repository.GifRepository;
+import com.kbe.application.sftp.FileTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,20 +29,16 @@ public class GifController {
     private GifInformationStorageApi gifInformationStorageApi;
     private CalculatorApi calculatorApi;
     private CSVExporter csvExporter;
+    private FileTransferService fileTransferService;
 
     @Autowired
-    public GifController(CalculatorApi calculatorApi, GifRepository gifRepository, MetaDataExtractorApi metaDataExtractorApi, GifInformationStorageApi gifInformationStorageApi, CSVExporter csvExporter) {
+    public GifController(CalculatorApi calculatorApi, GifRepository gifRepository, MetaDataExtractorApi metaDataExtractorApi, GifInformationStorageApi gifInformationStorageApi, CSVExporter csvExporter, FileTransferService fileTransferService) {
         this.csvExporter = csvExporter;
         this.calculatorApi = calculatorApi;
         this.gifRepository = gifRepository;
+        this.fileTransferService = fileTransferService;
         this.metaDataExtractorApi = metaDataExtractorApi;
         this.gifInformationStorageApi = gifInformationStorageApi;
-
-        try {
-            csvExporter.generateCSV();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @GetMapping("")
@@ -54,7 +51,7 @@ public class GifController {
     public ResponseEntity<Gif> postNewGif(@RequestBody NewGifRequest newGifRequest) {
         List<Gif> gifs = gifRepository.findAll();
         if (gifs.stream().anyMatch(gif -> gif.getUrl().equals(newGifRequest.getUrl()))) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
 
@@ -126,5 +123,24 @@ public class GifController {
         }
     }
 
+    @GetMapping("/export")
+    @ResponseBody
+    public ResponseEntity exportData() {
+        try {
+            csvExporter.generateCSV();
 
+            fileTransferService.uploadFile("all_informations.csv", "all_informations.csv");
+
+            boolean didSucceed = gifInformationStorageApi.getToStartExport();
+
+            if (!didSucceed) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return ResponseEntity.ok().build();
+    }
 }
