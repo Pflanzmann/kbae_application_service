@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kbe.application.model.GifInformation;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -12,8 +14,11 @@ import java.util.UUID;
 
 @Component
 public class GifInformationStorageApi {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public GifInformation postNewGifInformation(GifInformation gifInformation) throws IOException {
+        logger.info("Post new gif information to storage for: [{}]", gifInformation.getId());
+
         OkHttpClient okHttpClient = new OkHttpClient();
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -35,6 +40,8 @@ public class GifInformationStorageApi {
     }
 
     public List<GifInformation> getAllGifInformations() throws IOException {
+        logger.info("Get all gif information from all gifs");
+
         OkHttpClient okHttpClient = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -54,6 +61,8 @@ public class GifInformationStorageApi {
     }
 
     public GifInformation getGifInformation(UUID id) throws IOException {
+        logger.info("Get gif information for [{}]", id);
+
         OkHttpClient okHttpClient = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -72,6 +81,8 @@ public class GifInformationStorageApi {
     }
 
     public boolean getToStartExport() throws IOException {
+        logger.info("Get to start ping start importing on the storage");
+
         OkHttpClient okHttpClient = new OkHttpClient();
 
         Request request = new Request.Builder()

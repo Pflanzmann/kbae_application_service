@@ -144,7 +144,7 @@ public class GifController {
 
     @GetMapping("/export")
     @ResponseBody
-    public ResponseEntity exportData() {
+    public ResponseEntity<String> exportData() {
         logger.info("Export data");
 
         try {
@@ -162,7 +162,7 @@ public class GifController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Successfully exported");
     }
 
     @GetMapping("/debug")

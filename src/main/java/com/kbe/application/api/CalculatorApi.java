@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kbe.application.model.Gif;
 import com.kbe.application.model.GifVoteRatio;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -11,7 +13,11 @@ import java.io.IOException;
 @Component
 public class CalculatorApi {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public GifVoteRatio getCalculation(Gif gif) throws IOException {
+        logger.info("Calculate vote ratio for: [{}]", gif.getId());
+
         OkHttpClient okHttpClient = new OkHttpClient();
         ObjectMapper objectMapper = new ObjectMapper();
 
