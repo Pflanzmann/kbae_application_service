@@ -170,4 +170,29 @@ public class GifController {
     public boolean getDebugStatus() {
         return isDebug;
     }
+
+
+    @DeleteMapping("/debug/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteGif(@PathVariable(value = "id") UUID id) {
+        Gif gif = gifRepository.getById(id);
+        if (gif == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        gifRepository.deleteById(id);
+
+        try {
+            GifInformation gifInformation = gifInformationStorageApi.getGifInformation(id);
+            gifInformationStorageApi.deleteGifInformation(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("deleting from the storage failed");
+
+            gifRepository.save(gif);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return ResponseEntity.ok("Deleting gif succeeded");
+    }
 }

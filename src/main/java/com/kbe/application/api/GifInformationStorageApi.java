@@ -93,4 +93,18 @@ public class GifInformationStorageApi {
         Response response = okHttpClient.newCall(request).execute();
         return response.isSuccessful();
     }
+
+    public boolean deleteGifInformation(UUID id) throws IOException {
+        logger.info("Delete call to delete all information of gif with id: [{}]", id);
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("http://localhost:8083/api/information/delete")
+                .delete()
+                .build();
+
+        Response response = okHttpClient.newCall(request).execute();
+        return response.isSuccessful();
+    }
 }
